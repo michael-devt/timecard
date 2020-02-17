@@ -5,3 +5,15 @@ index:
 about:
     path: /about
     controller: App\Controller\DefaultController::about
+
+accounts:
+    path: /accounts
+    controller: App\Controller\AccountController::index
+
+account_new:
+    path: /account/new
+    controller: App\Controller\AccountController::new
+
+account_create:
+    path: /account/create
+    controller: App\Controller\AccountController::create
