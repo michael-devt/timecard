@@ -3,29 +3,49 @@
 {% block title %}Accounts{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container">
+    <div class="content">
+       {% for label, messages in app.flashes(['notice']) %}
+            {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+       {% endfor %}
+       <nav aria-label="breadcrumb" class="t-menu">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('account_new') }}">New Account</a></li>
+                <li class="breadcrumb-item"><a href="">Sort</a></li>
+                <li class="breadcrumb-item"><a href="">Delete</a></li>
+            </ol>
+        </nav>
+       <table class="table table-striped">  
+            <thead>
+                <tr>
+                    <th><input type="checkbox" name=""></th>
+                    <th>Detail</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Email Name</th>
+                    <th>Password</th>
 
-<div class="example-wrapper">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">✅ Accounts</li>
-        <li class="breadcrumb-item"><a href="{{ path('account_new') }}">Register new</a></li>
-        </ol>
-    </nav>
-    <table>
-    	<tbody>
-    		 {% for user in users %}
-    		<tr>
-				<td>{{ user.getLastName }}</td>
-				<td>{{ user.getFirstName }}</td>
-				<td>{{ user.getEmail }}</td>
-				<td>{{ user.getPassword }}</td>
-    		</tr>
-    		 {% endfor %}
-    	</tbody>
-    </table>
+                </tr>
+            </thead>
+            <tbody>
+                 {% for user in users %}
+                <tr>
+                    <td><input type="checkbox" name="">&nbsp</td>
+                    <td><a href="{{ path('account_edit', {id: user.getId}) }}"><i class="fa fa-folder"></i></a></td>
+                    <td>{{ user.getLastName }}</td>
+                    <td>{{ user.getFirstName }}</td>
+                    <td>{{ user.getEmail }}</td>
+                    <td>{{ user.getPassword }}</td>
+                    <!--<td><a href="{{ path('account_show', {id: user.getId}) }}" class="btn-warning">Show</a></td>-->
+                    <!--<td><a href="{{ path('account_delete', {id: user.getId}) }}" class="btn-danger">Delete</a></td>-->
+                </tr>
+                 {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

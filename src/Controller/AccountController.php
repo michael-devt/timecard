@@ -6,19 +6,21 @@ use App\Entity\Accounts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Form\Account\AccountType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AccountController extends AbstractController
 {
 
-    public function index()
+    public function index(SessionInterface $session)
     {
-        $repository = $this->getDoctrine()->getRepository(Accounts::class);
-        $users = $repository->findAll();
-
+        $entityManager = $this->getDoctrine()->getManager();
+        $users = $entityManager->getRepository(Accounts::class)->findAll();
         return $this->render('account/index.html.twig', [
             'users' => $users,
         ]);
     }
+
     public function new(Request $request){
 
         $account = new Accounts();
@@ -42,63 +44,72 @@ class AccountController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($account);
             $em->flush();
+            $this->addFlash(
+                'notice',
+                'New account was created!'
+            );
+            return $this->redirectToRoute('accounts');
         }
-        return $this->redirectToRoute('account_new');
+    }
 
-        /*
-        $em = $this->getDoctrine()->getManager();
+    public function edit($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $account = $entityManager->getRepository(Accounts::class)->find($id);
 
-        $account = new Accounts();
-        $account->setLastName('Doe');
-        $account->setFirstName('John');
-        $account->setEmail('mikewatawski@gmail.com');
-        $account->setPassword('123456');
         $form = $this->createForm(AccountType::class, $account);
-        
-        $registration = $form->getData();
 
-        $em->persist($registration);
-        $em->flush();*/
+        return $this->render('account/edit.html.twig',[
+            'form' => $form->createView(),
+            'id' => $id
+        ]);
+    }
 
+    public function update(Request $request, $id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $account = $entityManager->getRepository(Accounts::class)->find($id);
 
-        //$em->persist($registration->getAccount());
-       // $em->flush();
+        $form = $this->createForm(AccountType::class, $account);
+        $form->handleRequest($request);
 
-        
-        //create a user object and initializes some data
-        /*$account = new Accounts();
-        $account->setLastName('Velayo');
-        $account->setFirstName('Michael');
-        $account->setEmail('mikewatawski@gmail.com');
-        $account->setPassword('123456');
+        if($form->isSubmitted() && $form->isValid()){
+            $account = $form->getData();
+            $entityManager->persist($account);
+            $entityManager->flush();
+            $this->addFlash(
+                'notice',
+                'Your changes was saved!'
+            );
+            return $this->redirectToRoute('accounts');
+        }
+       
+    }
 
-        $form = $this->createFormBuilder($account)
-            ->add('last_name', TextType::class)
-            ->add('first_name', TextType::class)
-            ->add('email', TextType::class)
-            ->add('password', TextType::class)
-            ->add('save', SubmitType::class, ['label' => 'Create Account'])
-            ->getForm();*/
+    public function show($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $account = $entityManager->getRepository(Accounts::class)->find($id);
+        if (!$account){
+            throw $this->createNotFoundException('The account does not exist');
+        }
+        return $this->render('account/show.html.twig',[
+            'account' => $account,
+        ]);
+    }
 
-        // or you can add an argument to the action: createProduct(EntityManagerInterface $entityManager)
-        
-        /*$entityManager = $this->getDoctrine()->getManager();
+    public function delete($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $account = $entityManager->getRepository(Accounts::class)->find($id);
 
-        $account = new Accounts();
-        $account->setLastName('Velayo');
-        $account->setFirstName('Michael');
-        $account->setEmail('mikewatawski@gmail.com');
-        $account->setPassword('123456');
-
-        // tell Doctrine you want to (eventually) save the Product (no queries yet)
-        $entityManager->persist($account);
-
-        // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();            
-        */
-    	
-        //return $this->render('account/new.html.twig');
-        
-        
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($account);
+        $entityManager->flush();
+        $this->addFlash(
+            'notice',
+            'The selected account was deleted!'
+        );
+        return $this->redirectToRoute('accounts');
     }
 }

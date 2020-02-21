@@ -17,3 +17,20 @@ account_new:
 account_create:
     path: /account/create
     controller: App\Controller\AccountController::create
+
+account_edit:
+    path: /account/edit/{id}
+    controller: App\Controller\AccountController::edit
+
+account_update:
+    path: /account/update/{id}
+    controller: App\Controller\AccountController::update
+
+account_show:
+    path: /account/show/{id}
+    controller: App\Controller\AccountController::show
+
+account_delete:
+    path: /acount/delete/{id}
+    controller: App\Controller\AccountController::delete
+

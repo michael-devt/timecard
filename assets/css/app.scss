@@ -1,0 +1,23 @@
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #333;
+
+.container {
+	width: 90%;
+	margin: .5em auto;
+}
+
+.t-menu {
+	margin-top: 30px;	
+}
+.breadcrumb {
+	margin-bottom: 0;
+}
+
+.content {
+	font-size: 19px;
+}
+
+body {
+  font: 100% $font-stack;
+  color: $primary-color;
+}
